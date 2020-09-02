@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Color Game</title>
+	<!--<link rel="stylesheet" type="text/css" href="colorgame.css"> --> 
+	<link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjBsLgba0m2Hs5Xb2PwqhrB09V1J3Gx4tSTqG_RqFXXTHXEG9B7A">
+<style>
+body{
+	background: #232323; 
+	margin: 0;
+	font-family: "Montserrat" "Avenir";
+}
+#new{
+	margin-left: 30px;
+}
+.square{
+	width: 30%;
+	margin: 1.66%;
+	background: purple;
+	padding-bottom: 30%;
+	float: left;
+	margin: 1.66%;
+	border-radius: 15%;
+	transition: background 0.6s; 
+	--webkit-transition: background 0.6s; 
+	-moz-transition: background 0.6s; 
+}
+.container{
+	max-width: 600px;
+	margin: 20px auto;
+	padding: 10px;
+}
+h1{
+	color: white;
+	text-align: center;
+	background: steelblue;
+	font-weight: normal;
+	text-transform: uppercase; 
+	line-height: 1.1;
+	padding: 20px 0;
+}
+#display{
+	font-size: 200%;
+}
+#display:nth-of-child(1){
+	color:red;
+}
+#textMessage{
+	display: inline-block;
+	width: 20%;
+	font-size: 20px;
+}
+#score{
+	display: inline-block;
+	width: 20%;
+	font-size: 20px;
+}
+.stripe{
+	height: 30px;
+	background: white;
+	text-align: center;
+	color: black;
+}
+h1,.stripe{
+	margin: 0;
+}
+
+.selected{
+	background: steelblue;
+	color: white;
+}
+button{
+	border: none;
+	font-family: "Montserrat" "Avenir";
+	text-transform: uppercase;
+	background: none;
+	height: 100%;
+	font-weight: 700;
+	color: steelblue;
+	letter-spacing: 1px;
+	font-size: inherit;
+	outline: none;
+	transition: all 0.3s;
+}
+button:hover{
+	background: steelblue;
+	color:white;
+}
+/*#easy,#hard{
+	margin-right: 20px;
+}*/
+</style>
+</head>
+<body>
+	<h1 align="center">
+		The <br>
+		<span id="display"></span>
+		<br>
+		Color Guessing Game
+	</h1>
+	<div class="stripe">
+		<button onclick="location.reload();">New Colors</button>
+		<span id="textMessage"></span>
+		<button id="easy">EASY</button>
+		<button id="hard" class="selected">HARD</button>
+	</div>
+	<div class="container">
+		<div class="square"></div>
+		<div class="square"></div>
+		<div class="square"></div>
+		<div class="square"></div>
+		<div class="square"></div>
+		<div class="square"></div>
+	</div>
+<!--	<script type="text/javascript" src="colorgame.js"></script>-->
+
+
+<script>
+var numSquares=6;
+var colors = generateRandomColor(numSquares);
+var squares = document.querySelectorAll(".square");
+var dis = document.getElementById("display");
+var h1 = document.querySelector("h1");
+var pickedColor = pickColor();
+dis.textContent = pickedColor;
+var button = document.querySelector("button");
+var easy = document.getElementById("easy");
+var hard = document.getElementById("hard");
+var disp = document.getElementById("textMessage");
+
+
+easy.addEventListener("click", function(){
+	easy.classList.add("selected");
+	hard.classList.remove("selected");
+	h1.style.backgroundColor="steelblue";
+	disp.textContent="";
+	numSquares=3;
+	colors = generateRandomColor(numSquares);
+	pickedColor = pickColor();
+	dis.textContent = pickedColor;
+	for(var i=0;i<squares.length;i++){
+		if(colors[i]){
+			squares[i].style.backgroundColor = colors[i];
+		}
+		else{
+			squares[i].style.display = "none";
+		}
+	}
+});
+
+hard.addEventListener("click", function(){
+	hard.classList.add("selected");
+	easy.classList.remove("selected");
+	h1.style.backgroundColor="steelblue";
+	disp.textContent="";
+	numSquares=6;
+	colors = generateRandomColor(numSquares);
+	pickedColor = pickColor();
+	dis.textContent = pickedColor;
+	for(var i=0;i<squares.length;i++){
+		squares[i].style.backgroundColor = colors[i];
+		squares[i].style.display = "block";
+	}
+});
+
+for(var i=0;i<squares.length;i++) {
+	// initialise the colors
+	squares[i].style.backgroundColor = colors[i];
+	// add event listener
+	squares[i].addEventListener("click", function(){
+	var click = (this.style.backgroundColor).replace("rgb","RGB");
+	// console.log(pickedColor, click);
+	if(click===pickedColor){
+		disp.textContent="Correct!";
+		disp.style.color="green";
+		h1.style.backgroundColor = click;
+		changeColors(pickedColor);
+		button.textContent="Play Again?";
+		button.addEventListener("click", function(){
+				easy.addEventListener("click", function(){
+					easy.classList.add("selected");
+					hard.classList.remove("selected");
+					colors = generateRandomColor(numSquares);
+					pickedColor = pickColor();
+					dis.textContent = pickedColor;
+					for(var i=0;i<squares.length;i++){
+						if(colors[i]){
+							squares[i].style.backgroundColor = colors[i];
+						}
+						else{
+							squares[i].style.display = "none";
+						}
+					}
+				});
+				hard.addEventListener("click", function(){
+					hard.classList.add("selected");
+					easy.classList.remove("selected");
+					colors = generateRandomColor(numSquares);
+					pickedColor = pickColor();
+					dis.textContent = pickedColor;
+					for(var i=0;i<squares.length;i++){
+						squares[i].style.backgroundColor = colors[i];
+						squares[i].style.display = "block";
+					}
+				});
+		});
+	}
+	else{
+		this.style.backgroundColor="#232323";
+		disp.textContent="Try Again!";
+		disp.style.color="red";
+	}
+	});
+}
+
+function changeColors(c){
+	for(var i=0;i<squares.length;i++){
+		squares[i].style.backgroundColor=c;
+	}
+}
+
+function pickColor(){
+	var rand = Math.floor(Math.random() * colors.length);
+	return colors[rand];
+}
+
+function generateRandomColor(num){
+	//make an array
+	var arr=[];
+	//add num random colors
+	for(var i=0;i<num;i++){
+		// get random color and push into array
+		arr.push(randomColor());
+	}
+	return arr;
+}
+function randomColor(){
+	//pick red color from 0-255
+	//pick green color from 0-255
+	//pick blue color from 0-255
+	var r = Math.floor(Math.random() * 256);
+	var g = Math.floor(Math.random() * 256);
+	var b = Math.floor(Math.random() * 256);
+	// "rgb(r, g, b)"
+	var rand = "RGB(" + r + ", " + g + ", " + b + ")";
+	return rand;
+}
+</script>
+</body>
+</html>
